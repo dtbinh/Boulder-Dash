@@ -422,12 +422,21 @@ end
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;; BLAST-RELATED PRIMITIVES ;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+to blast::create-diamonds
+  ask neighbors [ sprout-diamonds 1 [ init-diamond ] ]
+  ask patch-here [ sprout-diamonds 1 [ init-diamond ] ]
+end
+
 to blast::kill-around
   ask turtles-on neighbors
     [ ifelse (breed = walls)
       [ if destructible? [ ioda:die ] ]
       [ if (breed != doors) [ ioda:die ] ]
     ]
+end
+
+to-report blast::diamond-maker?
+  report diamond-maker?
 end
 
 to blast::die

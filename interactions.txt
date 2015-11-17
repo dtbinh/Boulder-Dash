@@ -26,6 +26,11 @@ parallel interaction Collect
   actions	     target:die increase-score move-forward
 end
 
+parallel interaction CreateDiamonds
+  condition      diamond-maker?
+  actions        create-diamonds die
+end
+
 parallel interaction Dig
   trigger	     target-ahead?
   condition	     moving?

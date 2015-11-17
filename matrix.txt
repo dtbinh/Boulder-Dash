@@ -54,4 +54,5 @@ heros		Dig		         20 	dirt		 1
 heros		Collect		     80    	diamonds	 1
 heros		Explode		     100    monsters	 0
 
+blast       CreateDiamonds   90       UPDATE
 blast       Kill             100      UPDATE
