@@ -52,4 +52,6 @@ heros		ReadOrders	     90 	UPDATE
 heros		Advance		     10
 heros		Dig		         20 	dirt		 1
 heros		Collect		     80    	diamonds	 1
-heros		Explode		     100    monsters	 0 
+heros		Explode		     100    monsters	 0
+
+blast       Kill             100      UPDATE

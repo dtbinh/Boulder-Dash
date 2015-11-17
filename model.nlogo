@@ -20,6 +20,10 @@ walls-own     [ destructible? ]
 doors-own     [ open? ]
 blast-own     [ strength diamond-maker? ]
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;; BASIC PROCEDURES ;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 to setup
   clear-all
   init-world
@@ -41,6 +45,9 @@ to go
 
 end
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;; UTILS PROCEDURES ;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 to read-level [ filename ]
   file-open filename
   let s read-from-string file-read-line ; list with width and height
@@ -84,6 +91,10 @@ to create-agent [ char ]
     ]
 end
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;; INIT PROCEDURES ;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 to init-world
   set-default-shape walls "tile brick"
   set-default-shape heros "person"
@@ -158,8 +169,9 @@ to init-wall [ d ]
 end
 
 
-
-; primitives that are shared by several breeds
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;; PRIMITIVES THAT ARE SHARED BY SEVERAL BREEDS ;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 to-report default::nothing-below?
   report not any? turtles-on patch-at 0 -1
@@ -193,7 +205,9 @@ to default::move-forward
   move-to patch-ahead 1
 end
 
-; doors-related primitives
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;; DOORS-RELATED PRIMITIVES ;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 to-report doors::open?
   report open?
@@ -217,8 +231,9 @@ to doors::change-state
     ]
 end
 
-
-; diamonds-related primitives
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;; DIAMONDS-RELATED PRIMITIVES ;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 to diamonds::filter-neighbors
   ioda:filter-neighbors-on-patches (patch-set patch-here patch-at 0 -1)
@@ -245,8 +260,9 @@ to diamonds::move-down
 end
 
 to diamonds::create-blast
-  let dm? ifelse-value ([breed] of ioda:my-target = monsters) [ [right-handed?] of ioda:my-target ] [ true ]
-  hatch-blast 1 [ init-blast dm? ]
+  let target ioda:my-target
+  let dm? ifelse-value ([breed] of target = monsters) [ [right-handed?] of ioda:my-target ] [ true ]
+  hatch-blast 1 [ init-blast dm? move-to target]
 end
 
 to diamonds::die
@@ -254,8 +270,9 @@ to diamonds::die
 end
 
 
-
-; rocks-related primitives
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;; ROCKS-RELATED PRIMITIVES ;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 to rocks::filter-neighbors
   ioda:filter-neighbors-on-patches (patch-set patch-here patch-at 0 -1)
@@ -282,8 +299,9 @@ to rocks::move-down
 end
 
 to rocks::create-blast
-  let dm? ifelse-value ([breed] of ioda:my-target = monsters) [ [right-handed?] of ioda:my-target ] [ true ]
-  hatch-blast 1 [ init-blast dm? ]
+  let target ioda:my-target
+  let dm? ifelse-value ([breed] of target = monsters) [ [right-handed?] of ioda:my-target ] [ true ]
+  hatch-blast 1 [ init-blast dm? move-to target]
 end
 
 to rocks::die
@@ -291,8 +309,9 @@ to rocks::die
 end
 
 
-
-; monsters-related primitives
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;; MONSTERS-RELATED PRIMITIVES ;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 to monsters::filter-neighbors
   ioda:filter-neighbors-on-patches (patch-set patch-here patch-ahead 1)
@@ -321,19 +340,23 @@ to monsters::die
 end
 
 to monsters::create-blast
-  let dm? ifelse-value ([breed] of ioda:my-target = heros) [ true ] [ right-handed? ]
-  hatch-blast 1 [ init-blast dm? ]
+  let target ioda:my-target
+  let dm? ifelse-value ([breed] of target = heros) [ true ] [ right-handed? ]
+  hatch-blast 1 [ init-blast dm? move-to target ]
 end
 
-; dirt-related primitives
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;; DIRT-RELATED PRIMITIVES ;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 to dirt::die
   ioda:die
 end
 
 
-
-; hero-related primitives
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;; HERO-RELATED PRIMITIVES ;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 to send-message [ value ]
   set orders lput value orders
@@ -393,6 +416,30 @@ end
 to heros::increase-score
   set score score + 1
   set nb-to-collect nb-to-collect - 1
+end
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;; BLAST-RELATED PRIMITIVES ;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+to blast::kill-around
+  ask turtles-on neighbors
+    [ ifelse (breed = walls)
+      [ if destructible? [ ioda:die ] ]
+      [ if (breed != doors) [ ioda:die ] ]
+    ]
+end
+
+to blast::die
+  ioda:die
+end
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;; WALLS-RELATED PRIMITIVES ;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+to walls::die
+  ioda:die
 end
 @#$#@#$#@
 GRAPHICS-WINDOW

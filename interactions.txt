@@ -16,13 +16,13 @@
 ;
 
 parallel interaction Advance
-  condition 	     nothing-ahead? moving?
+  condition 	 nothing-ahead? moving?
   actions	     move-forward
 end
 
 parallel interaction Collect
   trigger	     target-ahead?
-  condition 	     moving?
+  condition 	 moving?
   actions	     target:die increase-score move-forward
 end
 
@@ -32,7 +32,7 @@ parallel interaction Dig
   actions	     target:die move-forward
 end
 
-exclusive interaction Explode
+parallel interaction Explode
   condition	     moving?
   actions 	     create-blast target:die die
 end
@@ -40,6 +40,10 @@ end
 parallel interaction Fall
   condition	     moving?
   actions	     move-down
+end
+
+parallel interaction Kill
+    actions      kill-around die
 end
 
 parallel interaction Open
