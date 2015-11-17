@@ -15,58 +15,9 @@
 ; of the line introduces a comment line. Empty lines are ignored.
 ;
 
-parallel interaction Open
-  trigger	     objectives-fulfilled?
-  condition	     closed?
-  actions	     change-state
-end
-	 
-parallel interaction StartFalling
-  trigger	     nothing-below?
-  condition	     not:moving?
-  actions	     start-moving
-end
-
-parallel interaction Fall
-  condition	     moving?
-  actions	     move-down
-end
-
-parallel interaction StopFalling
-  condition	     moving? 
-  actions	     stop-moving
-end
-
 parallel interaction Advance
   condition 	     nothing-ahead? moving?
   actions	     move-forward
-end
-
-parallel interaction Turn
-  trigger	     moving?
-  actions	     turn-right-or-left
-end
-
-parallel interaction Dig
-  trigger	     target-ahead?
-  condition	     moving? 
-  actions	     target:die move-forward
-end
-
-parallel interaction StopMoving
-  trigger	     needs-to-stop?
-  condition	     moving?
-  actions	     stop-moving
-end
-
-parallel interaction ReadOrders
-  trigger	     message-received?
-  actions	     handle-messages
-end
-
-exclusive interaction Explode
-  condition	     moving?
-  actions 	     create-blast target:die die
 end
 
 parallel interaction Collect
@@ -75,3 +26,51 @@ parallel interaction Collect
   actions	     target:die increase-score move-forward
 end
 
+parallel interaction Dig
+  trigger	     target-ahead?
+  condition	     moving?
+  actions	     target:die move-forward
+end
+
+exclusive interaction Explode
+  condition	     moving?
+  actions 	     create-blast target:die die
+end
+
+parallel interaction Fall
+  condition	     moving?
+  actions	     move-down
+end
+
+parallel interaction Open
+  trigger	     objectives-fulfilled?
+  condition	     closed?
+  actions	     change-state
+end
+
+parallel interaction ReadOrders
+  trigger	     message-received?
+  actions	     handle-messages
+end
+
+parallel interaction StartFalling
+  trigger	     nothing-below?
+  condition	     not:moving?
+  actions	     start-moving
+end
+
+parallel interaction StopFalling
+  condition	     moving?
+  actions	     stop-moving
+end
+
+parallel interaction StopMoving
+  trigger	     needs-to-stop?
+  condition	     moving?
+  actions	     stop-moving
+end
+
+parallel interaction Turn
+  trigger	     moving?
+  actions	     turn-right-or-left
+end
